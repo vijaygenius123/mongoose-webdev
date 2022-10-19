@@ -1,5 +1,6 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
+const {faker} = require('@faker-js/faker');
 const User = require("./User")
 
 mongoose.connect(process.env.MONGO_URI, () => {
@@ -9,12 +10,16 @@ mongoose.connect(process.env.MONGO_URI, () => {
     console.log(e)
 })
 
-async function createUser() {
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+}
+
+async function createUser(name, age, email) {
     try {
         const user = new User({
-            name: "Vijay",
-            age: 30,
-            email: "Vijaygenius123@gmail.com"
+            name: name,
+            age: age,
+            email: email
         })
         await user.save()
         console.log(user)
@@ -23,15 +28,44 @@ async function createUser() {
     }
 }
 
-async function findUser(uid){
+async function findUser(uid) {
     try {
         const user = await User.findById(uid)
         console.log(user)
-    } catch (e){
+    } catch (e) {
         console.log("User does not exist")
         console.log(e)
     }
 }
 
 //run()
-findUser("634ba10619155c4d154fe599")
+//findUser("634ba10619155c4d154fe599")
+
+async function createFakeUsers(count) {
+    for (let i = 0; i < count; i++) {
+        const randomName = faker.name.fullName();
+        const randomEmail = faker.internet.email();
+        const randomAge = getRandomInt(70);
+        console.log(randomName, randomAge, randomEmail)
+        createUser(randomName, randomAge, randomEmail)
+    }
+
+}
+
+//createFakeUsers(100)
+
+async function queryUsers(uid) {
+    try {
+        const users = await User
+            .where("age")
+            .gt(10).lt(15)
+            .select(["age", "name"])
+        console.log(users)
+    } catch (e) {
+        console.log("No user(s) found matching the query")
+        console.log(e)
+    }
+}
+
+findUser()
+queryUsers()
