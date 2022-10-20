@@ -67,5 +67,23 @@ async function queryUsers(uid) {
     }
 }
 
-findUser()
-queryUsers()
+// findUser()
+// queryUsers()
+
+
+async function findUserTest() {
+    try {
+        // const user = await User.findOne({name:'Vijay'})
+        // console.log(user)
+        // user.sayHi()
+        const userfindByName = await User.findByName('Vijay')
+        console.log(userfindByName)
+        const userquery = await User.find().byName("Vijay")
+        console.log(userquery)
+    } catch (e) {
+        console.log("User does not exist")
+        console.log(e)
+    }
+}
+
+findUserTest()
